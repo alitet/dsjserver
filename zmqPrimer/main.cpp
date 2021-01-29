@@ -16,11 +16,12 @@ int main()
   socket.bind("tcp://*:5555");
   
   const std::string data{ "02/01" };
-  int ch = 0;
+  //int ch = 0;
 
   CServerData serverData;
 
-  do
+  //do
+  while(true)
   {
     zmq::message_t request;
 
@@ -31,12 +32,12 @@ int main()
     std::this_thread::sleep_for(200ms);
     
     auto tokens = tokenizer(reqMsg, '/');
-    serverData.comando(tokens);
+    auto resp = serverData.comando(tokens);
 
-    socket.send(zmq::buffer(data), zmq::send_flags::none);
+    socket.send(zmq::buffer(resp), zmq::send_flags::none);
 
-    ch = toupper(_getch());    
-  } while (ch != 'X');  
+    //ch = toupper(_getch());    
+  } //while (ch != 'X');  
 
 	return 0;
 }
