@@ -10,6 +10,19 @@ std::string CServerData::comando(const std::vector<std::string> &tokens)
   case 1:
     retStr = msgAddUser(tokens[1]);
     break;
+  case 4: {
+    int id = strToInt(tokens[1]);
+    std::string name = tokens[2];
+
+    std::vector<std::pair<int, int>> puntos;
+    for (int i = 0; i < strToInt(tokens[4]); i+=2) {
+      int lx = strToInt(tokens[5 + i]);
+      int ly = strToInt(tokens[5 + i + 1]);
+      puntos.push_back(std::make_pair(lx, ly));
+    }
+    retStr = msgAddMap(id, name, puntos);
+
+  } break;
   default: break;
   }
 
@@ -71,6 +84,14 @@ std::string CServerData::msgAddUser(std::string name)
   } while (!hasid);
 
 	return retStr;
+}
+
+std::string CServerData::msgAddMap(int id, std::string name, std::vector<std::pair<int, int>> points)
+{
+  std::string retStr("03/");
+  mIslands.insert({ id, {name, points} });
+  retStr += intToStr(id) + "/" + intToStr((int)points.size());
+  return retStr;
 }
 
 
