@@ -15,9 +15,11 @@ std::string CServerData::comando(const std::vector<std::string> &tokens)
     std::string name = tokens[2];
 
     std::vector<std::pair<int, int>> puntos;
-    for (int i = 0; i < strToInt(tokens[4]); i+=2) {
-      int lx = strToInt(tokens[5 + i]);
-      int ly = strToInt(tokens[5 + i + 1]);
+    int idx = 0;
+    for (int i = 0; i < strToInt(tokens[4]); i++) {
+      int lx = strToInt(tokens[5 + idx]);
+      int ly = strToInt(tokens[5 + idx+1]);
+      idx += 2;
       puntos.push_back(std::make_pair(lx, ly));
     }
     retStr = msgAddMap(id, name, puntos);
