@@ -161,8 +161,8 @@ std::string CServerData::msgNumIds()
   std::string retStr("06/");
   retStr += intToStr(mUsers.size());
 
-  for (const auto& val : mUsers) {
-    retStr += "/" + val.first;
+  for (const auto &val : mUsers) {
+    retStr += "/" + intToStr(val.first);
   }
   return retStr;
 }
