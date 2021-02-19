@@ -31,6 +31,13 @@ std::string intToStr(int num)
   return ss.str();
 }
 
+std::string intToStr(size_t num)
+{
+  std::stringstream ss;
+  ss << num;
+  return ss.str();
+}
+
 float distance(int x1, int y1, int x2, int y2)
 {
   int xsq = (x2 - x1) * (x2 - x1);

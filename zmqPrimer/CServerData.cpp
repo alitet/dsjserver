@@ -1,6 +1,20 @@
 #include "CServerData.h"
 #include "Helpers.h"
 
+
+std::vector<std::pair<int, int>> getPointsInTokens(const std::vector<std::string>& tokens)
+{
+  std::vector<std::pair<int, int>> puntos;
+  int idx = 0;
+  for (int i = 0; i < strToInt(tokens[4]); i++) {
+    int lx = strToInt(tokens[5 + idx]);
+    int ly = strToInt(tokens[5 + idx + 1]);
+    idx += 2;
+    puntos.push_back(std::make_pair(lx, ly));
+  }
+  return puntos;
+}
+
 std::string CServerData::comando(const std::vector<std::string> &tokens)
 {
   std::string retStr;
@@ -14,21 +28,62 @@ std::string CServerData::comando(const std::vector<std::string> &tokens)
     int id = strToInt(tokens[1]);
     std::string name = tokens[2];
 
-    std::vector<std::pair<int, int>> puntos;
-    int idx = 0;
-    for (int i = 0; i < strToInt(tokens[4]); i++) {
-      int lx = strToInt(tokens[5 + idx]);
-      int ly = strToInt(tokens[5 + idx+1]);
-      idx += 2;
-      puntos.push_back(std::make_pair(lx, ly));
-    }
+    auto puntos = getPointsInTokens(tokens);
     retStr = msgAddMap(id, name, puntos);
 
+  } break;
+  case 5:
+    retStr = msgNumIds();
+    break;
+  case 7: {
+    int id = strToInt(tokens[1]);
+    retStr = msgGetIslandData(id);
+  } break;
+  case 9: {
+    int id = strToInt(tokens[1]);
+    retStr = msgGetIslandPoints(id);
   } break;
   default: break;
   }
 
 	return retStr;
+}
+
+void CServerData::addFakeUsers()
+{
+  mUsers.insert({ 67, "beckham"}); //std::make_pair(232, 527) } });
+  mUsers.insert({ 48, "akira"  }); //std::make_pair(143, 628) } });
+  mUsers.insert({ 12, "fidel"  }); //std::make_pair(74, 455) }  });
+  mUsers.insert({ 81, "mahalo" }); //std::make_pair(14, 24) }   });
+}
+
+void CServerData::addFakeIslands()
+{
+  mIslands.insert({ 67, 
+    { "england", std::make_pair(232, 527) ,{
+      std::make_pair(15, 10), std::make_pair(20, 5), std::make_pair(30, 5),
+      std::make_pair(35, 15), std::make_pair(30, 25), std::make_pair(35, 45),
+      std::make_pair(10, 45), std::make_pair(15, 30)
+    }}});
+
+  mIslands.insert({ 48,
+    { "japan", std::make_pair(143, 628) ,{
+      std::make_pair(25, 10), std::make_pair(35, 10), std::make_pair(35, 30),
+      std::make_pair(15, 45), std::make_pair(10, 35)
+    }} });
+
+  mIslands.insert({ 12,
+    { "cuba", std::make_pair(74, 455) ,{
+      std::make_pair(5, 25), std::make_pair(20, 15), std::make_pair(40, 15),
+      std::make_pair(45, 30)
+    }} });
+
+  mIslands.insert({ 81,
+    { "hawaii", std::make_pair(14, 24) ,{
+      std::make_pair(15, 10), std::make_pair(35, 20), std::make_pair(40, 30),
+      std::make_pair(20, 40), std::make_pair(5, 25)
+    }} });
+
 }
 
 std::pair<int, int> CServerData::getNewPosition()
@@ -37,10 +92,10 @@ std::pair<int, int> CServerData::getNewPosition()
   std::pair<int, int> retPos;
 
   do {
-    int xx = rand() % 949;
-    int yy = rand() % 949;
+    int xx = rand() % 950;
+    int yy = rand() % 950;
     bool found = true;
-    for (const auto& val : mUsers) {
+    for (const auto& val : mIslands) {
       int xval = val.second.pos.first;
       int yval = val.second.pos.second;
       if (distance(xx, yy, xval, yval) < 71.f) {
@@ -59,7 +114,7 @@ std::pair<int, int> CServerData::getNewPosition()
 int CServerData::getNameID(std::string name)
 {
   for (const auto& val : mUsers) {
-    if (val.second.name == name) {
+    if (val.second == name) {
       return val.first;
     }
   }
@@ -78,8 +133,7 @@ std::string CServerData::msgAddUser(std::string name)
   do {
     int iidd = rand() % 99 + 1;
     if (mUsers.count(iidd) == 0) {
-      auto pos = getNewPosition();
-      mUsers.insert({ iidd, {name, pos} });
+      mUsers.insert({ iidd, name });
       retStr.append(intToStr(iidd));
       hasid = true;
     }
@@ -91,15 +145,54 @@ std::string CServerData::msgAddUser(std::string name)
 std::string CServerData::msgAddMap(int id, std::string name, std::vector<std::pair<int, int>> points)
 {
   std::string retStr("03/");
-  mIslands.insert({ id, {name, points} });
+  if (mUsers.count(id) == 0) { 
+    retStr += intToStr(id) + "/0";
+    return retStr; 
+  }
+
+  auto pos = getNewPosition();
+  mIslands.insert({ id, {name, pos, points} });
   retStr += intToStr(id) + "/" + intToStr((int)points.size());
   return retStr;
 }
 
-
-std::string CServerData::msgGetMap()
+std::string CServerData::msgNumIds()
 {
-	return std::string();
+  std::string retStr("06/");
+  retStr += intToStr(mUsers.size());
+
+  for (const auto& val : mUsers) {
+    retStr += "/" + val.first;
+  }
+  return retStr;
 }
 
+std::string CServerData::msgGetIslandData(int id)
+{
+  std::string retStr("08/");
+  if (mIslands.count(id) == 0) {
+    retStr += "none";
+    return retStr;
+  }
+
+  auto isla = mIslands[id];
+  retStr += isla.name + "/" + intToStr(isla.pos.first) + 
+    "/" + intToStr(isla.pos.second);
+  return retStr;
+}
+
+std::string CServerData::msgGetIslandPoints(int id)
+{
+  std::string retStr("10/");
+  if (mIslands.count(id) == 0) {
+    retStr += "0";
+    return retStr;
+  }
+  auto isla = mIslands[id];
+  retStr += intToStr(isla.points.size());
+  for (const auto& val : isla.points) {
+    retStr += "/" + intToStr(val.first) + "/" + intToStr(val.second);
+  }    
+  return retStr;
+}
 

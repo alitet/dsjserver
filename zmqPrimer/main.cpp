@@ -19,6 +19,8 @@ int main()
   //int ch = 0;
 
   CServerData serverData;
+  serverData.addFakeUsers();
+  serverData.addFakeIslands();
 
   //do
   while(true)
