@@ -29,6 +29,7 @@ private:
   std::string msgNumIds();
   std::string msgGetIslandData(int id);
   std::string msgGetIslandPoints(int id);
+  std::string msgGetUserName(int id);
 
   //std::string msgGetMap();
 

@@ -43,6 +43,10 @@ std::string CServerData::comando(const std::vector<std::string> &tokens)
     int id = strToInt(tokens[1]);
     retStr = msgGetIslandPoints(id);
   } break;
+  case 11: {
+    int id = strToInt(tokens[1]);
+    retStr = msgGetUserName(id);
+  } break;
   default: break;
   }
 
@@ -51,10 +55,10 @@ std::string CServerData::comando(const std::vector<std::string> &tokens)
 
 void CServerData::addFakeUsers()
 {
-  mUsers.insert({ 67, "beckham"}); //std::make_pair(232, 527) } });
-  mUsers.insert({ 48, "akira"  }); //std::make_pair(143, 628) } });
-  mUsers.insert({ 12, "fidel"  }); //std::make_pair(74, 455) }  });
-  mUsers.insert({ 81, "mahalo" }); //std::make_pair(14, 24) }   });
+  mUsers.insert({ 67, "beckham"}); 
+  mUsers.insert({ 48, "akira"  }); 
+  mUsers.insert({ 12, "fidel"  }); 
+  mUsers.insert({ 81, "mahalo" }); 
 }
 
 void CServerData::addFakeIslands()
@@ -193,6 +197,13 @@ std::string CServerData::msgGetIslandPoints(int id)
   for (const auto& val : isla.points) {
     retStr += "/" + intToStr(val.first) + "/" + intToStr(val.second);
   }    
+  return retStr;
+}
+
+std::string CServerData::msgGetUserName(int id)
+{
+  std::string retStr("12/");
+  retStr += mUsers.count(id) == 0 ? "none" : mUsers[id];  
   return retStr;
 }
 
