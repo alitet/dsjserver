@@ -22,6 +22,7 @@ public:
 
   void addFakeUsers();
   void addFakeIslands();
+  void addFakeTrees();
 
 private:
   std::string msgAddUser(std::string name);
@@ -30,6 +31,9 @@ private:
   std::string msgGetIslandData(int id);
   std::string msgGetIslandPoints(int id);
   std::string msgGetUserName(int id);
+  std::string msgGetTrees(int id);
+
+  std::string msgAddTrees(int id, std::vector<std::pair<int, int>> trees);
 
   //std::string msgGetMap();
 
@@ -39,6 +43,7 @@ private:
 private:
 	std::unordered_map<int, std::string> mUsers;
   std::unordered_map<int, sIsland> mIslands;
+  std::unordered_map<int, std::vector<std::pair<int, int>>> mTrees;
 };
 
 void getPointsInVector(const std::vector<std::string>& tokens, std::vector<std::pair<int, int>>& puntos);

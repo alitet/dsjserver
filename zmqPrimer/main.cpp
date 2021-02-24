@@ -21,6 +21,7 @@ int main()
   CServerData serverData;
   serverData.addFakeUsers();
   serverData.addFakeIslands();
+  serverData.addFakeTrees();
 
   //do
   while(true)

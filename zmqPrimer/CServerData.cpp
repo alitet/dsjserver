@@ -2,13 +2,13 @@
 #include "Helpers.h"
 
 
-std::vector<std::pair<int, int>> getPointsInTokens(const std::vector<std::string>& tokens)
+std::vector<std::pair<int, int>> getPointsInTokens(const std::vector<std::string>& tokens, int startIdx)
 {
   std::vector<std::pair<int, int>> puntos;
   int idx = 0;
-  for (int i = 0; i < strToInt(tokens[4]); i++) {
-    int lx = strToInt(tokens[5 + idx]);
-    int ly = strToInt(tokens[5 + idx + 1]);
+  for (int i = 0; i < strToInt(tokens[startIdx]); i++) {
+    int lx = strToInt(tokens[startIdx + 1 + idx]);
+    int ly = strToInt(tokens[startIdx + 1 + idx + 1]);
     idx += 2;
     puntos.push_back(std::make_pair(lx, ly));
   }
@@ -28,7 +28,7 @@ std::string CServerData::comando(const std::vector<std::string> &tokens)
     int id = strToInt(tokens[1]);
     std::string name = tokens[2];
 
-    auto puntos = getPointsInTokens(tokens);
+    auto puntos = getPointsInTokens(tokens, 4);
     retStr = msgAddMap(id, name, puntos);
 
   } break;
@@ -48,8 +48,17 @@ std::string CServerData::comando(const std::vector<std::string> &tokens)
     retStr = msgGetUserName(id);
   } break;
   default: break;
-  }
+  case 13: {
+    int id = strToInt(tokens[1]);    
+    auto trees = getPointsInTokens(tokens, 2);
+    retStr = msgAddTrees(id, trees);
 
+  } break;
+  case 15: {
+    int id = strToInt(tokens[1]);
+    retStr = msgGetTrees(id);
+  } break;
+  }
 	return retStr;
 }
 
@@ -88,6 +97,15 @@ void CServerData::addFakeIslands()
       std::make_pair(20, 40), std::make_pair(5, 25)
     }} });
 
+}
+
+void CServerData::addFakeTrees()
+{
+  mTrees.insert({ 67, {std::make_pair(8, 38), std::make_pair(23, 40)} });
+  mTrees.insert({ 48, {std::make_pair(3, 16), std::make_pair(18, 48)} });
+  mTrees.insert({ 12, {std::make_pair(40, 49), std::make_pair(28,44)} });
+  mTrees.insert({ 81, {std::make_pair(9, 15), std::make_pair(15, 43)} });
+    
 }
 
 std::pair<int, int> CServerData::getNewPosition()
@@ -204,6 +222,36 @@ std::string CServerData::msgGetUserName(int id)
 {
   std::string retStr("12/");
   retStr += mUsers.count(id) == 0 ? "none" : mUsers[id];  
+  return retStr;
+}
+
+std::string CServerData::msgAddTrees(int id, std::vector<std::pair<int, int>> trees)
+{
+  std::string retStr("14/");
+  if (mUsers.count(id) == 0) {
+    retStr += intToStr(id) + "/0";
+    return retStr;
+  }
+
+  mTrees.insert({ id, {trees} });
+
+  retStr += intToStr(id) + "/" + intToStr((int)trees.size());
+  return retStr;
+}
+
+std::string CServerData::msgGetTrees(int id)
+{
+  std::string retStr("16/");
+  if (mTrees.count(id) == 0) {
+    retStr += "none";
+    return retStr;
+  }
+
+  auto tree = mTrees[id];
+  retStr += intToStr(tree.size());
+  for (const auto& val : tree) {
+    retStr += "/" + intToStr(val.first) + "/" + intToStr(val.second);
+  }
   return retStr;
 }
 
