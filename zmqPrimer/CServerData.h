@@ -14,6 +14,11 @@ struct sIsland {
   std::vector<std::pair<int, int>> points;
 };
 
+struct sWall {
+  int type;
+  int pos[3];
+};
+
 class CServerData
 {
 public:
@@ -34,6 +39,7 @@ private:
   std::string msgGetTrees(int id);
 
   std::string msgAddTrees(int id, std::vector<std::pair<int, int>> trees);
+  std::string msgAddWalls(int id, std::vector<sWall> walls);
 
   //std::string msgGetMap();
 
@@ -44,6 +50,7 @@ private:
 	std::unordered_map<int, std::string> mUsers;
   std::unordered_map<int, sIsland> mIslands;
   std::unordered_map<int, std::vector<std::pair<int, int>>> mTrees;
+  std::unordered_map<int, std::vector<sWall>> mWalls;
 };
 
-void getPointsInVector(const std::vector<std::string>& tokens, std::vector<std::pair<int, int>>& puntos);
+//void getPointsInVector(const std::vector<std::string>& tokens, std::vector<std::pair<int, int>>& puntos);

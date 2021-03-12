@@ -15,6 +15,22 @@ std::vector<std::pair<int, int>> getPointsInTokens(const std::vector<std::string
   return puntos;
 }
 
+std::vector<sWall> getWallsInTokens(const std::vector<std::string>& tokens, int startIdx)
+{
+  std::vector<sWall> walls;
+  int idx = 0;
+  for (int i = 0; i < strToInt(tokens[startIdx]); i++) {
+    int ti = strToInt(tokens[startIdx + 1 + idx]);
+    int lx = strToInt(tokens[startIdx + 1 + idx + 1]);
+    int ly = strToInt(tokens[startIdx + 1 + idx + 2]);
+    int lz = strToInt(tokens[startIdx + 1 + idx + 3]);
+    idx += 4;
+    
+    walls.push_back(sWall{ ti,{lx,ly,lz} });
+  }
+  return walls;
+}
+
 std::string CServerData::comando(const std::vector<std::string> &tokens)
 {
   std::string retStr;
@@ -57,6 +73,11 @@ std::string CServerData::comando(const std::vector<std::string> &tokens)
   case 15: {
     int id = strToInt(tokens[1]);
     retStr = msgGetTrees(id);
+  } break;
+  case 17: {
+    int id = strToInt(tokens[1]);
+    auto walls = getWallsInTokens(tokens, 2);
+    retStr = msgAddWalls(id, walls);
   } break;
   }
 	return retStr;
@@ -236,6 +257,20 @@ std::string CServerData::msgAddTrees(int id, std::vector<std::pair<int, int>> tr
   mTrees.insert({ id, {trees} });
 
   retStr += intToStr(id) + "/" + intToStr((int)trees.size());
+  return retStr;
+}
+
+std::string CServerData::msgAddWalls(int id, std::vector<sWall> walls)
+{
+  std::string retStr("18/");
+  if (mUsers.count(id) == 0) {
+    retStr += intToStr(id) + "/0";
+    return retStr;
+  }
+
+  mWalls.insert({ id, {walls} });
+
+  retStr += intToStr(id) + "/" + intToStr((int)walls.size());
   return retStr;
 }
 
