@@ -2,55 +2,52 @@
 #include <unordered_map>
 #include <utility>
 #include <string>
-
-//struct sData {
-//  std::string name;
-//  //std::pair<int, int> pos;
-//};
-
-struct sIsland {
-  std::string name;
-  std::pair<int, int> pos;
-  std::vector<std::pair<int, int>> points;
-};
-
-struct sWall {
-  int type;
-  int pos[3];
-};
+#include <memory>
 
 class CServerData
 {
+private:
+  class dataRecord;
+  std::vector<std::shared_ptr<dataRecord>> mvRecords;
+
+
 public:
-
   std::string comando(const std::vector<std::string> &tokens);
-
-  void addFakeUsers();
-  void addFakeIslands();
-  void addFakeTrees();
 
 private:
   std::string msgAddUser(std::string name);
-  std::string msgAddMap(int id, std::string name, std::vector<std::pair<int, int>> points);
-  std::string msgNumIds();
-  std::string msgGetIslandData(int id);
-  std::string msgGetIslandPoints(int id);
-  std::string msgGetUserName(int id);
-  std::string msgGetTrees(int id);
+  std::string msgAddWelcome(std::string msg, int id);
+  std::string msgAreNewIds(int id);
+  std::string msgGetIds();
+  std::string msgGetName(int askid);
+  std::string msgGetBienvenida(int askid);
+  std::string msgAddPlanet(int id, int diametro, const std::string& name);
 
-  std::string msgAddTrees(int id, std::vector<std::pair<int, int>> trees);
-  std::string msgAddWalls(int id, std::vector<sWall> walls);
+  //std::string msgAddMap(int id, std::string name, std::vector<std::pair<int, int>> points);
+  //std::string msgNumIds();
+  //std::string msgGetIslandData(int id);
+  //std::string msgGetIslandPoints(int id);
+  //std::string msgGetUserName(int id);
+  //std::string msgGetTrees(int id);
+
+  //std::string msgAddTrees(int id, std::vector<std::pair<int, int>> trees);
+  //std::string msgAddWalls(int id, std::vector<sWall> walls);
 
   //std::string msgGetMap();
 
-  std::pair<int, int> getNewPosition();
+  //std::pair<int, int> getNewPosition();
   int getNameID(std::string name);
+  void addNameID(std::string name, int id);
 
-private:
-	std::unordered_map<int, std::string> mUsers;
-  std::unordered_map<int, sIsland> mIslands;
-  std::unordered_map<int, std::vector<std::pair<int, int>>> mTrees;
-  std::unordered_map<int, std::vector<sWall>> mWalls;
+  bool buscaID(int id);
+  int IDCount();
+
+  std::tuple<int, int, int> findNewPosition();
+
+  std::shared_ptr<dataRecord> getRecord(int id);
+
+  
+
+
 };
 
-//void getPointsInVector(const std::vector<std::string>& tokens, std::vector<std::pair<int, int>>& puntos);

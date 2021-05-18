@@ -44,3 +44,11 @@ float distance(int x1, int y1, int x2, int y2)
   int ysq = (y2 - y1) * (y2 - y1);
   return sqrtf(static_cast<float>(xsq + ysq));
 }
+
+float distance(int x1, int y1, int z1, int x2, int y2, int z2)
+{
+  int xsq = (x2 - x1) * (x2 - x1);
+  int ysq = (y2 - y1) * (y2 - y1);
+  int zsq = (z2 - z1) * (z2 - z1);
+  return sqrtf(static_cast<float>(xsq + ysq + zsq));
+}
