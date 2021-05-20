@@ -91,17 +91,18 @@ std::string CServerData::comando(const std::vector<std::string> &tokens)
     std::string name = tokens[3];
     retStr = msgAddPlanet(id, diametro, name);		 
 	} break;
-    //case 15: {
-    //  int id = strToInt(tokens[1]);
-    //  retStr = msgGetTrees(id);
-    //} break;
-    //case 17: {
-    //  int id = strToInt(tokens[1]);
-    //  auto walls = getWallsInTokens(tokens, 2);
-    //  retStr = msgAddWalls(id, walls);
-    //} break;
-    //}
-  default: break;
+	case 15: {
+		int id = strToInt(tokens[1]);
+    int askId = strToInt(tokens[1]);
+		retStr = msgGetPlanet(askId);
+	} break;
+		//case 17: {
+		//  int id = strToInt(tokens[1]);
+		//  auto walls = getWallsInTokens(tokens, 2);
+		//  retStr = msgAddWalls(id, walls);
+		//} break;
+		//}
+	default: break;
   }
 	return retStr;
 }
@@ -273,6 +274,27 @@ std::string CServerData::msgAddPlanet(int id, int diametro, const std::string &n
     retStr.append(intToStr(xp)); retStr.append("-");
     retStr.append(intToStr(yp)); retStr.append("-");
     retStr.append(intToStr(zp));
+  }
+  return retStr;
+}
+
+std::string CServerData::msgGetPlanet(int askid)
+{
+  std::string retStr("016-");
+  auto record = getRecord(askid);  
+  if (record != nullptr) {
+    if (record->position.x != 0 ||
+      record->position.y != 0 ||
+      record->position.z != 0) {
+      retStr.append("01-");
+      retStr.append(intToStr(record->position.x)); retStr.append("-");
+      retStr.append(intToStr(record->position.y)); retStr.append("-");
+      retStr.append(intToStr(record->position.z)); retStr.append("-");
+      retStr.append(intToStr(record->diametro));
+    }
+    else {
+      retStr.append("00");
+    }
   }
   return retStr;
 }

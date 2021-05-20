@@ -22,6 +22,7 @@ private:
   std::string msgGetName(int askid);
   std::string msgGetBienvenida(int askid);
   std::string msgAddPlanet(int id, int diametro, const std::string& name);
+  std::string msgGetPlanet(int askid);
 
   //std::string msgAddMap(int id, std::string name, std::vector<std::pair<int, int>> points);
   //std::string msgNumIds();
