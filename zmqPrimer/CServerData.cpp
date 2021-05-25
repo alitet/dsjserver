@@ -159,6 +159,10 @@ std::tuple<int, int, int> CServerData::findNewPosition()
     
     bool found = true;
     for (const auto& val : mvRecords) {
+      if (val->position.x == 0 && 
+          val->position.x == 0 && 
+          val->position.x == 0) { continue; }
+
       int xval = val->position.x;
       int yval = val->position.y;
       int zval = val->position.z;
