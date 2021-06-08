@@ -2,12 +2,13 @@
 #include "Helpers.h"
 #include <ctime>
 
+typedef std::vector<std::string>::iterator vecStrIter;
 
 class CServerData::dataRecord {
 public:
   CServerData::dataRecord() 
     : nombre(""), personnummer(0), welcomeMsg("")
-    , lastNumberOfIds(0)
+    , lastNumberOfIds(0), naveComp("")
   { }
   
   struct sPoint3 {
@@ -23,7 +24,11 @@ public:
   sPoint3 position;
   int diametro;
   std::string planetName;
+  std::string naveComp;
+
 };
+
+
 //std::vector<std::pair<int, int>> getPointsInTokens(const std::vector<std::string>& tokens, int startIdx)
 //{
 //  std::vector<std::pair<int, int>> puntos;
@@ -96,12 +101,20 @@ std::string CServerData::comando(const std::vector<std::string> &tokens)
     int askId = strToInt(tokens[1]);
 		retStr = msgGetPlanet(askId);
 	} break;
-		//case 17: {
-		//  int id = strToInt(tokens[1]);
-		//  auto walls = getWallsInTokens(tokens, 2);
-		//  retStr = msgAddWalls(id, walls);
-		//} break;
-		//}
+  case 17: {
+    int id = strToInt(tokens[1]);
+    int radio = strToInt(tokens[2]);
+    retStr = msgGetPlanetsInRadio(id, radio);
+  } break;
+  case 19: {
+    int id = strToInt(tokens[1]);
+    retStr = msgAddNave(id, tokens, 2);
+  } break;
+  case 21: {
+    int id = strToInt(tokens[1]);
+    int askId = strToInt(tokens[2]);
+    retStr = msgGetNave(askId);
+  } break;
 	default: break;
   }
 	return retStr;
@@ -160,8 +173,8 @@ std::tuple<int, int, int> CServerData::findNewPosition()
     bool found = true;
     for (const auto& val : mvRecords) {
       if (val->position.x == 0 && 
-          val->position.x == 0 && 
-          val->position.x == 0) { continue; }
+          val->position.y == 0 && 
+          val->position.z == 0) { continue; }
 
       int xval = val->position.x;
       int yval = val->position.y;
@@ -177,6 +190,31 @@ std::tuple<int, int, int> CServerData::findNewPosition()
     }
   } while (!haspos);
   return retPos;
+}
+
+std::vector<int> CServerData::getIdsInRadio(int id, int radio)
+{
+  std::vector<int> retVec;
+  auto rec = getRecord(id);
+  for (auto& val : mvRecords) {
+    if (val->personnummer == id) { continue; }
+    float dist = distance(
+      val->position.x, val->position.y, val->position.z,
+      rec->position.x, rec->position.y, rec->position.z);
+    if (dist < (val->diametro + rec->diametro)) {
+      retVec.push_back(val->personnummer);
+    }
+  }
+  return retVec;
+}
+
+std::string concatTokens(vecStrIter begin, vecStrIter end) 
+{
+  std::string retStr;
+  for (auto it = begin; it != end; it++) {
+    retStr.append(*it); retStr.append("-");
+  }  
+  return retStr;
 }
 
 //---------------------------------------
@@ -303,6 +341,43 @@ std::string CServerData::msgGetPlanet(int askid)
   return retStr;
 }
 
+std::string CServerData::msgGetPlanetsInRadio(int id, int radio)
+{
+  std::string retStr("018-");
+  auto planets = getIdsInRadio(id, radio);
+  retStr.append(intToStr(planets.size())); retStr.append("-");
+  for (auto& val : planets) {
+    retStr.append(intToStr(val)); retStr.append("-");
+  }
+  return retStr;
+}
+
+std::string CServerData::msgAddNave(int id, std::vector<std::string> tokens, int offset)
+{
+  std::string retStr("020-RECIBIDO");
+  auto record = getRecord(id);
+  if (record != nullptr) {
+    auto begIt = tokens.begin() + offset;
+    record->naveComp.assign(concatTokens(begIt, tokens.end()));
+  }
+  return retStr;
+}
+
+std::string CServerData::msgGetNave(int askId)
+{
+  std::string retStr("022-");
+  auto record = getRecord(askId);
+  if (record != nullptr) {
+    if (record->naveComp != "") {
+      retStr.append("01-");
+      retStr.append(record->naveComp);
+    }
+    else {
+      retStr.append("00");
+    }
+  }
+  return retStr;
+}
 
 
 //std::string CServerData::msgAddMap(int id, std::string name, std::vector<std::pair<int, int>> points)

@@ -23,6 +23,9 @@ private:
   std::string msgGetBienvenida(int askid);
   std::string msgAddPlanet(int id, int diametro, const std::string& name);
   std::string msgGetPlanet(int askid);
+  std::string msgGetPlanetsInRadio(int id, int radio);
+  std::string msgAddNave(int id, std::vector<std::string> tokens, int offset);
+  std::string msgGetNave(int askId);
 
   //std::string msgAddMap(int id, std::string name, std::vector<std::pair<int, int>> points);
   //std::string msgNumIds();
@@ -46,7 +49,7 @@ private:
   std::tuple<int, int, int> findNewPosition();
 
   std::shared_ptr<dataRecord> getRecord(int id);
-
+  std::vector<int> getIdsInRadio(int id, int radio);
   
 
 
