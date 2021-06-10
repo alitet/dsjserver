@@ -29,35 +29,6 @@ public:
 };
 
 
-//std::vector<std::pair<int, int>> getPointsInTokens(const std::vector<std::string>& tokens, int startIdx)
-//{
-//  std::vector<std::pair<int, int>> puntos;
-//  int idx = 0;
-//  for (int i = 0; i < strToInt(tokens[startIdx]); i++) {
-//    int lx = strToInt(tokens[startIdx + 1 + idx]);
-//    int ly = strToInt(tokens[startIdx + 1 + idx + 1]);
-//    idx += 2;
-//    puntos.push_back(std::make_pair(lx, ly));
-//  }
-//  return puntos;
-//}
-//
-//std::vector<sWall> getWallsInTokens(const std::vector<std::string>& tokens, int startIdx)
-//{
-//  std::vector<sWall> walls;
-//  int idx = 0;
-//  for (int i = 0; i < strToInt(tokens[startIdx]); i++) {
-//    int ti = strToInt(tokens[startIdx + 1 + idx]);
-//    int lx = strToInt(tokens[startIdx + 1 + idx + 1]);
-//    int ly = strToInt(tokens[startIdx + 1 + idx + 2]);
-//    int lz = strToInt(tokens[startIdx + 1 + idx + 3]);
-//    idx += 4;
-//    
-//    walls.push_back(sWall{ ti,{lx,ly,lz} });
-//  }
-//  return walls;
-//}
-
 std::string CServerData::comando(const std::vector<std::string> &tokens)
 {
   std::string retStr = "error";
@@ -114,6 +85,16 @@ std::string CServerData::comando(const std::vector<std::string> &tokens)
     int id = strToInt(tokens[1]);
     int askId = strToInt(tokens[2]);
     retStr = msgGetNave(askId);
+  } break;
+  case 23: {
+    int id = strToInt(tokens[1]);
+    //int askId = strToInt(tokens[2]);
+    //retStr = msgGetNave(askId);
+  } break;
+  case 25: {
+    int id = strToInt(tokens[1]);
+    int askId = strToInt(tokens[2]);
+    //retStr = msgGetNave(askId);
   } break;
 	default: break;
   }
@@ -378,110 +359,4 @@ std::string CServerData::msgGetNave(int askId)
   }
   return retStr;
 }
-
-
-//std::string CServerData::msgAddMap(int id, std::string name, std::vector<std::pair<int, int>> points)
-//{
-//  std::string retStr("03/");
-//  if (mUsers.count(id) == 0) { 
-//    retStr += intToStr(id) + "/0";
-//    return retStr; 
-//  }
-//
-//  auto pos = getNewPosition();
-//  mIslands.insert({ id, {name, pos, points} });
-//  retStr += intToStr(id) + "/" + intToStr((int)points.size());
-//  return retStr;
-//}
-//
-//std::string CServerData::msgNumIds()
-//{
-//  std::string retStr("06/");
-//  retStr += intToStr(mUsers.size());
-//
-//  for (const auto &val : mUsers) {
-//    retStr += "/" + intToStr(val.first);
-//  }
-//  return retStr;
-//}
-//
-//std::string CServerData::msgGetIslandData(int id)
-//{
-//  std::string retStr("08/");
-//  if (mIslands.count(id) == 0) {
-//    retStr += "none";
-//    return retStr;
-//  }
-//
-//  auto isla = mIslands[id];
-//  retStr += isla.name + "/" + intToStr(isla.pos.first) + 
-//    "/" + intToStr(isla.pos.second);
-//  return retStr;
-//}
-//
-//std::string CServerData::msgGetIslandPoints(int id)
-//{
-//  std::string retStr("10/");
-//  if (mIslands.count(id) == 0) {
-//    retStr += "0";
-//    return retStr;
-//  }
-//  auto isla = mIslands[id];
-//  retStr += intToStr(isla.points.size());
-//  for (const auto& val : isla.points) {
-//    retStr += "/" + intToStr(val.first) + "/" + intToStr(val.second);
-//  }    
-//  return retStr;
-//}
-//
-//std::string CServerData::msgGetUserName(int id)
-//{
-//  std::string retStr("12/");
-//  retStr += mUsers.count(id) == 0 ? "none" : mUsers[id];  
-//  return retStr;
-//}
-//
-//std::string CServerData::msgAddTrees(int id, std::vector<std::pair<int, int>> trees)
-//{
-//  std::string retStr("14/");
-//  if (mUsers.count(id) == 0) {
-//    retStr += intToStr(id) + "/0";
-//    return retStr;
-//  }
-//
-//  mTrees.insert({ id, {trees} });
-//
-//  retStr += intToStr(id) + "/" + intToStr((int)trees.size());
-//  return retStr;
-//}
-//
-//std::string CServerData::msgAddWalls(int id, std::vector<sWall> walls)
-//{
-//  std::string retStr("18/");
-//  if (mUsers.count(id) == 0) {
-//    retStr += intToStr(id) + "/0";
-//    return retStr;
-//  }
-//
-//  mWalls.insert({ id, {walls} });
-//
-//  retStr += intToStr(id) + "/" + intToStr((int)walls.size());
-//  return retStr;
-//}
-//
-//std::string CServerData::msgGetTrees(int id)
-//{
-//  std::string retStr("16/");
-//  if (mTrees.count(id) == 0) {
-//    retStr += "none";
-//    return retStr;
-//  }
-//
-//  auto tree = mTrees[id];
-//  retStr += intToStr(tree.size());
-//  for (const auto& val : tree) {
-//    retStr += "/" + intToStr(val.first) + "/" + intToStr(val.second);
-//  }
-//  return retStr;
-//}
 
