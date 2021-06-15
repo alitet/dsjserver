@@ -26,6 +26,8 @@ private:
   std::string msgGetPlanetsInRadio(int id, int radio);
   std::string msgAddNave(int id, std::vector<std::string> tokens, int offset);
   std::string msgGetNave(int askId);
+  std::string msgSetNavePosition(int id, int x, int y, int z);
+  std::string msgGetNavePosition(int askId);
 
   //std::string msgAddMap(int id, std::string name, std::vector<std::pair<int, int>> points);
   //std::string msgNumIds();

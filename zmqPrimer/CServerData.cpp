@@ -8,7 +8,7 @@ class CServerData::dataRecord {
 public:
   CServerData::dataRecord() 
     : nombre(""), personnummer(0), welcomeMsg("")
-    , lastNumberOfIds(0), naveComp("")
+    , lastNumberOfIds(0), naveComp(""), hayNavePos(false)
   { }
   
   struct sPoint3 {
@@ -26,6 +26,8 @@ public:
   std::string planetName;
   std::string naveComp;
 
+  sPoint3 navePosition;
+  bool hayNavePos;
 };
 
 
@@ -88,13 +90,15 @@ std::string CServerData::comando(const std::vector<std::string> &tokens)
   } break;
   case 23: {
     int id = strToInt(tokens[1]);
-    //int askId = strToInt(tokens[2]);
-    //retStr = msgGetNave(askId);
+    int x = strToInt(tokens[2]);
+    int y = strToInt(tokens[3]);
+    int z = strToInt(tokens[4]);    
+    retStr = msgSetNavePosition(id, x, y, z);
   } break;
   case 25: {
     int id = strToInt(tokens[1]);
     int askId = strToInt(tokens[2]);
-    //retStr = msgGetNave(askId);
+    retStr = msgGetNavePosition(askId);
   } break;
 	default: break;
   }
@@ -352,6 +356,38 @@ std::string CServerData::msgGetNave(int askId)
     if (record->naveComp != "") {
       retStr.append("01-");
       retStr.append(record->naveComp);
+    }
+    else {
+      retStr.append("00");
+    }
+  }
+  return retStr;
+}
+
+std::string CServerData::msgSetNavePosition(int id, int x, int y, int z)
+{
+  std::string retStr("024-RECIBIDO");
+  auto record = getRecord(id);
+  if (record != nullptr) {
+    record->navePosition.x = x;
+    record->navePosition.y = y;
+    record->navePosition.z = z;
+    record->hayNavePos = true;
+  }
+  return retStr;
+}
+
+std::string CServerData::msgGetNavePosition(int askId)
+{
+  std::string retStr("026-");
+  auto record = getRecord(askId);
+  if (record != nullptr) {
+    if (record->hayNavePos) {
+      retStr.append("01-");
+      auto navep = record->navePosition;
+      retStr.append(intToStr(navep.x)); retStr.append("-");
+      retStr.append(intToStr(navep.y)); retStr.append("-");
+      retStr.append(intToStr(navep.z));
     }
     else {
       retStr.append("00");
