@@ -46,6 +46,9 @@ int main()
   std::vector<std::string> fakeNave1{ "019", id1, "0", "0", "0", "0", "5", "5", "5", "0", "0", "0" };
   serverData.comando(fakeNave1);
 
+  std::vector<std::string> fakeNavePos1{ "023", id1, "100", "300", "600"};
+  serverData.comando(fakeNavePos1);
+
   //do
   while(true)
   {
