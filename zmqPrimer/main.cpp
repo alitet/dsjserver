@@ -23,29 +23,28 @@ int main()
   std::vector<std::string> fakeUser2{ "001", "Sue" };
   std::vector<std::string> fakeUser3{ "001", "Johnny" };
   std::vector<std::string> fakeUser4{ "001", "Ben" };
-
   std::vector<std::string> fakeUser5{ "001", "Marco" };
   
   auto id1 = tokenizer(serverData.comando(fakeUser1),'-').at(2);
   auto id2 = tokenizer(serverData.comando(fakeUser2),'-').at(2);
   auto id3 = tokenizer(serverData.comando(fakeUser3),'-').at(2);
   auto id4 = tokenizer(serverData.comando(fakeUser4),'-').at(2);
-
   auto id5 = tokenizer(serverData.comando(fakeUser5), '-').at(2);
 
   std::vector<std::string> fakePlanet1{ "013", id1, "40", "elastic" };
   std::vector<std::string> fakePlanet2{ "013", id2, "50", "invisible" };
   std::vector<std::string> fakePlanet3{ "013", id3, "60", "flames" };
   std::vector<std::string> fakePlanet4{ "013", id4, "70", "Dwayne" };
-
   std::vector<std::string> fakePlanet5{ "013", id5, "50", "Solis" };
 
   serverData.comando(fakePlanet1);
   serverData.comando(fakePlanet2);
   serverData.comando(fakePlanet3);
   serverData.comando(fakePlanet4);
-
   serverData.comando(fakePlanet5);
+
+  std::vector<std::string> fakeNave1{ "019", id1, "0", "0", "0", "0", "5", "5", "5", "0", "0", "0" };
+  serverData.comando(fakeNave1);
 
   //do
   while(true)
